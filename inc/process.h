@@ -1,6 +1,6 @@
 #pragma once
 
-#include "arch.h"
+#include "hardware.h"
 
 typedef struct {
     Reg_file_t *reg_file;

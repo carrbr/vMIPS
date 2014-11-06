@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "vmips.h"
 #include "process.h"
-#include "arch.h"
+#include "hardware.h"
 
 int main() {
 
