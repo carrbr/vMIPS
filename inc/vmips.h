@@ -26,3 +26,5 @@ typedef struct {
 } Arch_info_t;
 
 typedef uint32_t Word32_t;
+
+Arch_info_t *init();

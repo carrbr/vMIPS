@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 #include "vmips.h"
-#include "arch.h" // this is user-defined architecture configuration parameters
-
+// this is user-defined architecture configuration parameters
+#include "arch.h"
 
 /*
    abstraction of the processor's register file (which will be kept separate from
@@ -21,6 +21,7 @@ typedef struct {
 Reg_file_t *init_reg_file() {
     Reg_file_t *regs = malloc(sizeof *regs);
     regs->reg_size = REGISTER_WORD_SIZE;
+    regs->num_regs = NUM_REGISTERS;
     return regs;
 }
 

@@ -8,7 +8,7 @@ SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJS=$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OBJS_GCC_PROF=$(SRC:%.c=$(OBJ_DIR)/%-prof)
 
-USER_INC=mips
+USER_INC=arch
 
 all: vmips
 		
