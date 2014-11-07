@@ -5,6 +5,7 @@
 // this is user-defined architecture configuration parameters
 #include "arch.h"
 
+
 /*
    abstraction of the processor's register file (which will be kept separate from
    that of other processes
@@ -18,14 +19,8 @@ typedef struct {
 /*
    gets a pointer to a ready-to-use register file
  */
-Reg_file_t *init_reg_file() {
-    Reg_file_t *regs = malloc(sizeof *regs);
-    regs->reg_size = REGISTER_WORD_SIZE;
-    regs->num_regs = NUM_REGISTERS;
-    return regs;
-}
-
-
+Reg_file_t *init_reg_file();
+    
 /*
    abstraction of a process' memory space
  */
@@ -38,19 +33,31 @@ typedef struct {
 /*
    gets a pointer to a ready-to-use memory space
  */
-Memory_t *init_memory_space() {
-    Memory_t *mem = malloc(sizeof *mem);
-    mem->mem_words = MEM_SIZE_IN_WORDS;
-    mem->word_size = MEM_WORD_SIZE;
-    return mem;
-}
+Memory_t *init_memory_space();
+
+/*
+ * abstraction of processors opcode handling functions.
+ *
+ * This is a table of function pointers indexed by opcode
+ */
+typedef struct {
+    void (*opcodes[OPCODE_COUNT]) (Word32_t);
+    unsigned int num_opcodes;
+} Opcode_table_t;
+
+/*
+ * contains information about the processor architecture
+ */
+typedef struct {
+    int endian;
+    int word_size;
+    int instr_length;
+    Opcode_table_t *opcode_table;
+} Arch_info_t;
 
 /*
 TODO: implement this
-    should return a struct with info about the platform, including at least endian-ness
+should return a struct with info about the platform, including at least endian-ness
  */
-Arch_info_t *arch_init() {
-    return NULL;
-}
-
+Arch_info_t *arch_init();
 

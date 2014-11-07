@@ -2,9 +2,9 @@
 #include "vmips.h"
 #include "process.h"
 #include "hardware.h"
+#include "instrs.h"
 
 int main() {
-    init(); // TODO: this doesn't actually do anything yet
 
     Process_t *proc = build_process();
 
@@ -33,12 +33,17 @@ int main() {
     Word32_t mask = 0x07c00000;
     printf("Register for instr 11110011 01101110 10010011 10010000: %d\n", proc->reg_file->regs[(instr & mask) >> 22]);
 
-}
 
-Arch_info_t *init() {
-    // get info from implementation about the architecture we are simulating
-    Arch_info_t *arch_config = (Arch_info_t *)arch_init();
-    return arch_config;
+    // try to use opcode table
+    Arch_info_t *arch = arch_init();
+    arch->opcode_table->opcodes[get_opcode(0x00000000)](1);
+
+    // clean up after ourselves
+    free(arch->opcode_table);
+    free(arch);
+    free(proc->mem_space);
+    free(proc->reg_file);
+    free(proc);
 }
 
 Process_t *build_process() {    

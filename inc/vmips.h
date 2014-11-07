@@ -8,8 +8,8 @@
 /*
  * enums for defining endian-ness
  */
-#define BIG_ENDIAN 0
-#define LITTLE_ENDIAN 1
+#define VMIPS_BIG_ENDIAN 0
+#define VMIPS_LITTLE_ENDIAN 1
 
 /*
  * enums for determining word size and instruction size
@@ -19,12 +19,5 @@
 #define THIRTY_TWO_BIT 32
 #define SIXTY_FOUR_BIT 64
 
-typedef struct {
-    int endian;
-    int wordsize;
-    int instr_length;
-} Arch_info_t;
-
 typedef uint32_t Word32_t;
 
-Arch_info_t *init();
