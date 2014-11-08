@@ -28,4 +28,4 @@
 /*
  * define number of processor opcodes available
  */
-#define OPCODE_COUNT 1
+#define OPCODE_COUNT 0x2C

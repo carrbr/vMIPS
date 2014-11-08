@@ -37,6 +37,24 @@ int main() {
     // try to use opcode table
     Arch_info_t *arch = arch_init();
     arch->opcode_table->opcodes[get_opcode(0x00000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x0B000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x0C000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x10000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x14000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x20000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x24000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x2B000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x2C000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x30000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x34000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x3C000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x40000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x8C000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x93000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x94000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0xA3000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0xA4000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0xAC000000)](1);
 
     // clean up after ourselves
     free(arch->opcode_table);
