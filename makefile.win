@@ -9,7 +9,7 @@ USER_SRC_DIR=arch/src
 USER_SRC=$(USER_SRC_DIR)/*.c
 
 # not ideal but it works for now
-OBJS=obj\vmips.obj obj\hardware.obj obj\instrs.obj
+OBJS=obj\vmips.obj obj\hardware.obj obj\instrs.obj obj\arch.obj
 
 all: vmips.exe
 		

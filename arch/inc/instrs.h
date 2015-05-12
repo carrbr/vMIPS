@@ -8,14 +8,33 @@ void init_alu_func_table();
 
 #define OPCODE_LENGTH 6
 
-unsigned int get_opcode(Word32_t instr);
-
+/*
+ * Opcode Enums
+ */
+#define ALU 	0x00
+#define J		0x02
+#define JAL		0x03
+#define BEQ		0x04
+#define BNE		0x05
+#define ADDI	0x08
+#define ADDIU	0x09
+#define SLTI	0x0A
+#define SLTIU	0x0B
+#define ANDI	0x0C
+#define ORI		0x0D
+#define LUI		0x0F
+#define MFC0	0x10
+#define LW		0x23
+#define LBU		0x24
+#define LHU		0x25
+#define SB		0x28
+#define SH		0x029
+#define SW		0x2B
 
 /*
  * start mips opcode handler function prototypes here
  */
-void alu_op(Word32_t instr, Process_t *proc);
-
+void alu_op(Decoded_instr_t instr, Process_t *proc);
 
 /*
  * ALU Function Enums
@@ -48,27 +67,27 @@ void alu_op(Word32_t instr, Process_t *proc);
 /*
  * ALU function handler function prototypes
  */
-void alu_unimpl_op(Word32_t instr, Process_t *proc);
-void alu_sll_op(Word32_t instr, Process_t *proc);
-void alu_srl_op(Word32_t instr, Process_t *proc);
-void alu_sra_op(Word32_t instr, Process_t *proc);
-void alu_sllv_op(Word32_t instr, Process_t *proc);
-void alu_srlv_op(Word32_t instr, Process_t *proc);
-void alu_jr_op(Word32_t instr, Process_t *proc);
-void alu_syscall_op(Word32_t instr, Process_t *proc);
-void alu_mfhi_op(Word32_t instr, Process_t *proc);
-void alu_mflo_op(Word32_t instr, Process_t *proc);
-void alu_mult_op(Word32_t instr, Process_t *proc);
-void alu_multu_op(Word32_t instr, Process_t *proc);
-void alu_div_op(Word32_t instr, Process_t *proc);
-void alu_divu_op(Word32_t instr, Process_t *proc);
-void alu_add_op(Word32_t instr, Process_t *proc);
-void alu_addu_op(Word32_t instr, Process_t *proc);
-void alu_sub_op(Word32_t instr, Process_t *proc);
-void alu_subu_op(Word32_t instr, Process_t *proc);
-void alu_and_op(Word32_t instr, Process_t *proc);
-void alu_or_op(Word32_t instr, Process_t *proc);
-void alu_xor_op(Word32_t instr, Process_t *proc);
-void alu_nor_op(Word32_t instr, Process_t *proc);
-void alu_slt_op(Word32_t instr, Process_t *proc);
-void alu_sltu_op(Word32_t instr, Process_t *proc);
+void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc);
+void alu_sll_op(Decoded_instr_t instr, Process_t *proc);
+void alu_srl_op(Decoded_instr_t instr, Process_t *proc);
+void alu_sra_op(Decoded_instr_t instr, Process_t *proc);
+void alu_sllv_op(Decoded_instr_t instr, Process_t *proc);
+void alu_srlv_op(Decoded_instr_t instr, Process_t *proc);
+void alu_jr_op(Decoded_instr_t instr, Process_t *proc);
+void alu_syscall_op(Decoded_instr_t instr, Process_t *proc);
+void alu_mfhi_op(Decoded_instr_t instr, Process_t *proc);
+void alu_mflo_op(Decoded_instr_t instr, Process_t *proc);
+void alu_mult_op(Decoded_instr_t instr, Process_t *proc);
+void alu_multu_op(Decoded_instr_t instr, Process_t *proc);
+void alu_div_op(Decoded_instr_t instr, Process_t *proc);
+void alu_divu_op(Decoded_instr_t instr, Process_t *proc);
+void alu_add_op(Decoded_instr_t instr, Process_t *proc);
+void alu_addu_op(Decoded_instr_t instr, Process_t *proc);
+void alu_sub_op(Decoded_instr_t instr, Process_t *proc);
+void alu_subu_op(Decoded_instr_t instr, Process_t *proc);
+void alu_and_op(Decoded_instr_t instr, Process_t *proc);
+void alu_or_op(Decoded_instr_t instr, Process_t *proc);
+void alu_xor_op(Decoded_instr_t instr, Process_t *proc);
+void alu_nor_op(Decoded_instr_t instr, Process_t *proc);
+void alu_slt_op(Decoded_instr_t instr, Process_t *proc);
+void alu_sltu_op(Decoded_instr_t instr, Process_t *proc);

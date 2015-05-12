@@ -48,7 +48,7 @@ Process_t *build_process();
  * This is a table of function pointers indexed by opcode
  */
 typedef struct {
-    void (*opcodes[OPCODE_COUNT]) (Word32_t, Process_t *);
+    void (*opcodes[OPCODE_COUNT]) (Decoded_instr_t, Process_t *);
     unsigned int num_opcodes;
 } Opcode_table_t;
 
@@ -67,4 +67,3 @@ TODO: implement this
 should return a struct with info about the platform, including at least endian-ness
  */
 Arch_info_t *arch_init();
-

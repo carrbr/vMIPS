@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "vmips.h"
-//#include "process.h"
 #include "hardware.h"
 #include "instrs.h"
 
@@ -29,14 +28,19 @@ int main() {
         printf("Memory[%d]: %d\n", i, proc->mem_space->memory[i]);
     }
 
-    Word32_t instr = 0xF36E9390; // 0b11110011 01101110 10010011 10010000
-    Word32_t mask =  0x07C00000; // 0b00000111 11000000 00000000 00000000
-    printf("Register for instr 11110011 01101110 10010011 10010000: %d\n", proc->reg_file->regs[(instr & mask) >> 22]);
-
-
+    Word32_t instr = 0x036E9390; // 0b00000011 01101110 10010011 10010000
+    Decoded_instr_t dinstr = decode_instr(instr); // TODO make sure we check for NOOPs
+    printf("Register for instr 11110011 01101110 10010011 10010000: %d\n", proc->reg_file->regs[dinstr.instr.r.rt]);
+    
     // try to use opcode table
     Arch_info_t *arch = arch_init();
-    arch->opcode_table->opcodes[get_opcode(0x00000000)](0, NULL);
+    arch->opcode_table->opcodes[dinstr.opcode](dinstr, proc);
+    
+    instr = 0x0B6E9390; // 0b00001011 01101110 10010011 10010000
+    dinstr = decode_instr(instr);
+    
+    instr = 0x436E9390; // 0b01000011 01101110 10010011 10010000
+    dinstr = decode_instr(instr);
 
     // clean up after ourselves
     free(arch->opcode_table);

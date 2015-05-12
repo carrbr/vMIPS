@@ -3,26 +3,22 @@
 #include "instrs.h"
 #include "debug.h"
 
-#define OPCODE_MASK 0xFC000000 // get the opcode
-#define OPCODE_SHIFT 26
-#define FUNC_MASK 0x0000003F // get the function code
-
 /*
  * abstraction of ALU's function handling.
  *
  * This is a table of function pointers indexed by function code
  */
 #define FUNC_CODE_COUNT 0x2F
-static void (*funcs[FUNC_CODE_COUNT]) (Word32_t, Process_t *);
+static void (*funcs[FUNC_CODE_COUNT]) (Decoded_instr_t, Process_t *);
 
 
 Opcode_table_t *init_opcode_table() {
     Opcode_table_t *opcodes = malloc(sizeof *opcodes);
     opcodes->num_opcodes = OPCODE_COUNT;
-    opcodes->opcodes[0] = alu_op;
+    opcodes->opcodes[ALU] = alu_op;
     
     init_alu_func_table();
-    
+
     return opcodes;
 }
 
@@ -85,115 +81,104 @@ void init_alu_func_table() {
     funcs[0x2F] = alu_unimpl_op;
 }
 
-unsigned int get_opcode(Word32_t instr) {
-    return (OPCODE_MASK & instr) >> 26;
-}
-
-void alu_op(Word32_t instr, Process_t *proc) {
+void alu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("I'm an ALU OP\n");
-    if (instr == 0) {
-        // NOOP --> do nothing
-        DEBUG_PRINT("NOOP\n");
-        return;
-    }
-    printf("INSTR: %X\n", instr);
     
-    Word32_t func_code = instr & FUNC_MASK;
-    funcs[func_code](instr, proc);
+    funcs[instr.instr.r.funct](instr, proc);
 }
 
-void alu_unimpl_op(Word32_t instr, Process_t *proc) {
+void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENTED OPERATION: CRASHING\n");
     exit(1);
 }
-void alu_sll_op(Word32_t instr, Process_t *proc) {
+void alu_sll_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_srl_op(Word32_t instr, Process_t *proc) {
+void alu_srl_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_sra_op(Word32_t instr, Process_t *proc) {
+void alu_sra_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_sllv_op(Word32_t instr, Process_t *proc) {
+void alu_sllv_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_srlv_op(Word32_t instr, Process_t *proc) {
+void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_jr_op(Word32_t instr, Process_t *proc) {
+void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_syscall_op(Word32_t instr, Process_t *proc) {
+void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_mfhi_op(Word32_t instr, Process_t *proc) {
+void alu_mfhi_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_mflo_op(Word32_t instr, Process_t *proc) {
+void alu_mflo_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_mult_op(Word32_t instr, Process_t *proc) {
+void alu_mult_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_multu_op(Word32_t instr, Process_t *proc) {
+void alu_multu_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_div_op(Word32_t instr, Process_t *proc) {
+void alu_div_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_divu_op(Word32_t instr, Process_t *proc) {
+void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_add_op(Word32_t instr, Process_t *proc) {
+void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_addu_op(Word32_t instr, Process_t *proc) {
+void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_sub_op(Word32_t instr, Process_t *proc) {
+void alu_sub_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_subu_op(Word32_t instr, Process_t *proc) {
+void alu_subu_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_and_op(Word32_t instr, Process_t *proc) {
+void alu_and_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_or_op(Word32_t instr, Process_t *proc) {
+void alu_or_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_xor_op(Word32_t instr, Process_t *proc) {
+void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_nor_op(Word32_t instr, Process_t *proc) {
+void alu_nor_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_slt_op(Word32_t instr, Process_t *proc) {
+void alu_slt_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
 
-void alu_sltu_op(Word32_t instr, Process_t *proc) {
+void alu_sltu_op(Decoded_instr_t instr, Process_t *proc) {
     
 }
