@@ -40,6 +40,7 @@ void alu_op(Word32_t instr, Process_t *proc);
 #define AND 	0x24
 #define OR	 	0x25
 #define XOR 	0x26
+#define NOR 	0x27
 #define SLT 	0x2A
 #define SLTU 	0x2B
 
@@ -68,5 +69,6 @@ void alu_subu_op(Word32_t instr, Process_t *proc);
 void alu_and_op(Word32_t instr, Process_t *proc);
 void alu_or_op(Word32_t instr, Process_t *proc);
 void alu_xor_op(Word32_t instr, Process_t *proc);
+void alu_nor_op(Word32_t instr, Process_t *proc);
 void alu_slt_op(Word32_t instr, Process_t *proc);
 void alu_sltu_op(Word32_t instr, Process_t *proc);

@@ -48,6 +48,7 @@ void init_alu_func_table() {
     funcs[AND] = alu_and_op;
     funcs[OR] = alu_or_op;
     funcs[XOR] = alu_xor_op;
+    funcs[NOR] = alu_nor_op;
     funcs[SLT] = alu_slt_op;
     funcs[SLTU] = alu_sltu_op;
     
@@ -76,7 +77,6 @@ void init_alu_func_table() {
     funcs[0x1D] = alu_unimpl_op;
     funcs[0x1E] = alu_unimpl_op;
     funcs[0x1F] = alu_unimpl_op;
-    funcs[0x27] = alu_unimpl_op;
     funcs[0x28] = alu_unimpl_op;
     funcs[0x29] = alu_unimpl_op;
     funcs[0x2C] = alu_unimpl_op;
@@ -183,6 +183,10 @@ void alu_or_op(Word32_t instr, Process_t *proc) {
 }
 
 void alu_xor_op(Word32_t instr, Process_t *proc) {
+    
+}
+
+void alu_nor_op(Word32_t instr, Process_t *proc) {
     
 }
 
