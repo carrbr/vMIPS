@@ -12,6 +12,10 @@
  */
 typedef struct {
     Word32_t regs[NUM_REGISTERS];
+    Word32_t pc; // program counter reg
+    Word32_t status; // processor status reg
+    Word32_t hi;
+    Word32_t lo;
     unsigned int num_regs;
     unsigned int reg_size;
 } Reg_file_t; // mips has 32 registers, each holding a 32 bit word

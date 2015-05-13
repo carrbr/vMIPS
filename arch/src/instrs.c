@@ -92,11 +92,11 @@ void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     exit(1);
 }
 void alu_sll_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    DEBUG_PRINT("SLL FUNC");
 }
 
 void alu_srl_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    DEBUG_PRINT("SRL FUNC");
 }
 
 void alu_sra_op(Decoded_instr_t instr, Process_t *proc) {
