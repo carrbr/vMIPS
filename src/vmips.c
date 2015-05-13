@@ -29,7 +29,7 @@ int main() {
         printf("Memory[%d]: %d\n", i, proc->mem_space->memory[i]);
     }
 
-    Word32_t instr = 0b11110011011011101001001110010000;
+    Word32_t instr = 0xF36E9390;
     Word32_t mask = 0x07c00000;
     printf("Register for instr 11110011 01101110 10010011 10010000: %d\n", proc->reg_file->regs[(instr & mask) >> 22]);
 
