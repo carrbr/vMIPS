@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "vmips.h"
-#include "process.h"
+//#include "process.h"
 #include "hardware.h"
 #include "instrs.h"
 
@@ -20,7 +20,7 @@ int main() {
         printf("Reg[%d]: %d\n", i, proc->reg_file->regs[i]);
     }
 
-    // iterate through reg file
+    // iterate through memory space
     for (i = 0; i < proc->mem_space->mem_words; i++) {
         proc->mem_space->memory[i] = i + 1;
     }
@@ -29,14 +29,14 @@ int main() {
         printf("Memory[%d]: %d\n", i, proc->mem_space->memory[i]);
     }
 
-    Word32_t instr = 0xF36E9390;
-    Word32_t mask = 0x07c00000;
+    Word32_t instr = 0xF36E9390; // 0b11110011 01101110 10010011 10010000
+    Word32_t mask =  0x07C00000; // 0b00000111 11000000 00000000 00000000
     printf("Register for instr 11110011 01101110 10010011 10010000: %d\n", proc->reg_file->regs[(instr & mask) >> 22]);
 
 
     // try to use opcode table
     Arch_info_t *arch = arch_init();
-    arch->opcode_table->opcodes[get_opcode(0x00000000)](1);
+    arch->opcode_table->opcodes[get_opcode(0x00000000)](0, NULL);
 
     // clean up after ourselves
     free(arch->opcode_table);

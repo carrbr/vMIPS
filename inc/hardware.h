@@ -35,13 +35,20 @@ typedef struct {
  */
 Memory_t *init_memory_space();
 
+typedef struct {
+    Reg_file_t *reg_file;
+    Memory_t *mem_space;
+} Process_t;
+
+Process_t *build_process();
+
 /*
  * abstraction of processors opcode handling functions.
  *
  * This is a table of function pointers indexed by opcode
  */
 typedef struct {
-    void (*opcodes[OPCODE_COUNT]) (Word32_t);
+    void (*opcodes[OPCODE_COUNT]) (Word32_t, Process_t *);
     unsigned int num_opcodes;
 } Opcode_table_t;
 
