@@ -10,16 +10,11 @@ void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
 void init_processor(Process_t *proc);
 
-/*
- * Global Variable
- *
- * necessary so that the syscall routine can access it and determine if program
- * is terminating
- */
-int terminate = False;
+int terminate = FALSE;
 
 int main(int argc, char *argv[]) {
     int i;
+    
     Word32_t instr;
     Decoded_instr_t dinstr;
     

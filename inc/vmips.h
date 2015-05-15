@@ -22,3 +22,11 @@
 typedef uint32_t Word32_t;
 
 #define BIN_FILE_NAME 1
+
+/*
+ * Global Variable
+ *
+ * necessary so that the syscall routine can access it and determine if program
+ * is terminating
+ */
+extern int terminate;
