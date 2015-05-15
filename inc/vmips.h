@@ -21,3 +21,4 @@
 
 typedef uint32_t Word32_t;
 
+#define BIN_FILE_NAME 1

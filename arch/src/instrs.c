@@ -116,7 +116,9 @@ void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    if (proc->reg_file->regs[v0_REG] == 10) { // exit
+        terminate = TRUE;
+    }
 }
 
 void alu_mfhi_op(Decoded_instr_t instr, Process_t *proc) {

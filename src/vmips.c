@@ -8,59 +8,46 @@
 
 void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
+void init_processor(Process_t *proc);
 
-int main() {
+/*
+ * Global Variable
+ *
+ * necessary so that the syscall routine can access it and determine if program
+ * is terminating
+ */
+int terminate = False;
 
-    Process_t *proc = build_process();
-
-    // just perform some tests to make sure everything is working properly
-
-    // iterate through reg file
+int main(int argc, char *argv[]) {
     int i;
-    for (i = 0; i < proc->reg_file->num_regs; i++) {
-        proc->reg_file->regs[i] = i + 1;
-    }
-
-    for (i = 0; i < proc->reg_file->num_regs; i++) {
-        printf("Reg[%d]: %d\n", i, proc->reg_file->regs[i]);
-    }
-
-    // iterate through memory space
-    for (i = 0; i < proc->mem_space->mem_words; i++) {
-        proc->mem_space->memory[i] = i + 1;
-    }
-
-    for (i = 0; i < proc->mem_space->mem_words; i++) {
-        printf("Memory[%d]: %d\n", i, proc->mem_space->memory[i]);
-    }
-    
-    if (load_mips_object_file("C:\\Users\\carrb_000\\Documents\\MIPS\\mips1.o", proc, START_ADDR)) {
-        DEBUG_PRINT("ERR %s: failed to load object file", __FUNCTION__);
-        cleanup(NULL, proc);
-        exit(1);
-    }
     Word32_t instr;
     Decoded_instr_t dinstr;
     
-    for (i = 0; i < 10; i++) {
-        instr = proc->mem_space->memory[START_ADDR + i]; // 0b11110011 01101110 10010011 10010000
-        dinstr = decode_instr(instr); // TODO make sure we check for NOOPs
+    // make sure we were passed a MIPS binary file
+    if (argc < 2) {
+        ERR_PRINT("We are having a bad problem and you will not go to space today.\n");
+        exit(1);
     }
-            
-    //Word32_t instr = 0x036E9390; // 0b00000011 01101110 10010011 10010000
-    instr = 0x00A62020; // 0b11110011 01101110 10010011 10010000
-    dinstr = decode_instr(instr); // TODO make sure we check for NOOPs
-    
-    // try to use opcode table
-    Arch_info_t *arch = arch_init();
-    arch->opcode_table->opcodes[dinstr.opcode](dinstr, proc);
-    
-    instr = 0x0B6E9390; // 0b00001011 01101110 10010011 10010000
-    dinstr = decode_instr(instr);
-    
-    instr = 0x436E9390; // 0b01000011 01101110 10010011 10010000
-    dinstr = decode_instr(instr);
 
+    // begin init routines
+    Process_t *proc = build_process();
+        Arch_info_t *arch = arch_init();
+    if (load_mips_object_file(argv[BIN_FILE_NAME], proc, START_ADDR)) {
+        DEBUG_PRINT("ERR %s: failed to load object file", __FUNCTION__);
+        cleanup(arch, proc);
+        exit(1);
+    }
+    
+    // main exec loop
+    while (!terminate) {
+        instr = proc->mem_space->memory[START_ADDR + i];
+        if (instr != 0) { // ensure not NOOP
+            dinstr = decode_instr(instr);
+            arch->opcode_table->opcodes[dinstr.opcode](dinstr, proc);
+        }
+        i++;
+    }
+    
     cleanup(arch, proc);
     return 0;
 }
@@ -77,8 +64,19 @@ Process_t *build_process() {
     // setup environment for code execution
     Process_t *proc = malloc(sizeof(Process_t));
     proc->reg_file = init_reg_file();
+    proc->reg_file->regs[0] = 0; // this reg is always $zero in real MIPS
     proc->mem_space = init_memory_space();
+    
+    init_processor(proc);
+    
     return proc;
+}
+
+void init_processor(Process_t *proc) {
+    proc->reg_file->status = 0;
+    proc->reg_file->pc = START_ADDR;
+    proc->reg_file->regs[sp_REG] = proc->mem_space->word_size - 1; // start stack at top of mem space
+    proc->reg_file->regs[fp_REG] = proc->reg_file->regs[sp_REG]; 
 }
 
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset) {

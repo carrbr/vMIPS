@@ -8,6 +8,11 @@ void init_alu_func_table();
 
 #define OPCODE_LENGTH 6
 
+// special register indexes
+#define v0_REG 2 // used for syscall identification
+#define sp_REG 29 // stack pointer
+#define fp_REG 30 // frame pointer
+
 /*
  * Opcode Enums
  */
