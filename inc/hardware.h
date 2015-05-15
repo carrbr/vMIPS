@@ -32,6 +32,7 @@ typedef struct {
     Word32_t memory[MEM_SIZE_IN_WORDS];
     unsigned int mem_words;
     unsigned int word_size;
+    unsigned int word_size_bytes;
 } Memory_t;
 
 /*

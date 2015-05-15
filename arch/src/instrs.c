@@ -144,7 +144,7 @@ void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    DEBUG_PRINT("ADD FUNC");
 }
 
 void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {

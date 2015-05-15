@@ -13,6 +13,7 @@ Memory_t *init_memory_space() {
     Memory_t *mem = malloc(sizeof *mem);
     mem->mem_words = MEM_SIZE_IN_WORDS;
     mem->word_size = MEM_WORD_SIZE;
+    mem->word_size_bytes = MEM_WORD_SIZE / 8;
     return mem;
 }
 
