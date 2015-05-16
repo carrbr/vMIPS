@@ -29,7 +29,7 @@
 /*
  * define number of processor opcodes available
  */
-#define OPCODE_COUNT 1
+#define OPCODE_COUNT 0x2C
 
 /*
  * Instruction Type Enums
@@ -73,6 +73,7 @@ typedef struct {
 } Decoded_instr_t;
 
 Decoded_instr_t decode_instr(Word32_t instr);
+void print_decoded_instr(const Decoded_instr_t *di);
 
 /*
  * masks and offsets for decoding instructions

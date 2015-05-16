@@ -16,30 +16,50 @@ void init_alu_func_table();
 /*
  * Opcode Enums
  */
-#define ALU 	0x00
-#define J		0x02
-#define JAL		0x03
-#define BEQ		0x04
-#define BNE		0x05
-#define ADDI	0x08
-#define ADDIU	0x09
-#define SLTI	0x0A
-#define SLTIU	0x0B
-#define ANDI	0x0C
-#define ORI		0x0D
-#define LUI		0x0F
-#define MFC0	0x10
-#define LW		0x23
-#define LBU		0x24
-#define LHU		0x25
-#define SB		0x28
-#define SH		0x029
-#define SW		0x2B
+#define ALU_OP 		0x00
+#define J_OP		0x02
+#define JAL_OP		0x03
+#define BEQ_OP		0x04
+#define BNE_OP		0x05
+#define ADDI_OP 	0x08
+#define ADDIU_OP	0x09
+#define SLTI_OP		0x0A
+#define SLTIU_OP	0x0B
+#define ANDI_OP		0x0C
+#define ORI_OP		0x0D
+#define LUI_OP		0x0F
+#define MFC0_OP		0x10
+#define LW_OP		0x23
+#define LBU_OP		0x24
+#define LHU_OP		0x25
+#define SB_OP		0x28
+#define SH_OP		0x29
+#define SW_OP		0x2B
 
 /*
- * start mips opcode handler function prototypes here
+ * mips opcode handler function prototypes
  */
 void alu_op(Decoded_instr_t instr, Process_t *proc);
+void j_op(Decoded_instr_t instr, Process_t *proc);
+void jal_op(Decoded_instr_t instr, Process_t *proc);
+void beq_op(Decoded_instr_t instr, Process_t *proc);
+void bne_op(Decoded_instr_t instr, Process_t *proc);
+void addi_op(Decoded_instr_t instr, Process_t *proc);
+void addiu_op(Decoded_instr_t instr, Process_t *proc);
+void slti_op(Decoded_instr_t instr, Process_t *proc);
+void sltiu_op(Decoded_instr_t instr, Process_t *proc);
+void andi_op(Decoded_instr_t instr, Process_t *proc);
+void ori_op(Decoded_instr_t instr, Process_t *proc);
+void lui_op(Decoded_instr_t instr, Process_t *proc);
+void mfc0_op(Decoded_instr_t instr, Process_t *proc);
+void lw_op(Decoded_instr_t instr, Process_t *proc);
+void lbu_op(Decoded_instr_t instr, Process_t *proc);
+void lhu_op(Decoded_instr_t instr, Process_t *proc);
+void sb_op(Decoded_instr_t instr, Process_t *proc);
+void sh_op(Decoded_instr_t instr, Process_t *proc);
+void sw_op(Decoded_instr_t instr, Process_t *proc);
+void unimpl_op(Decoded_instr_t instr, Process_t *proc);
+
 
 /*
  * ALU Function Enums

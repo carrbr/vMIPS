@@ -10,7 +10,7 @@ void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
 void init_processor(Process_t *proc);
 
-int terminate = FALSE;
+int terminate;
 
 int main(int argc, char *argv[]) {
     int i;
@@ -28,15 +28,17 @@ int main(int argc, char *argv[]) {
     Process_t *proc = build_process();
         Arch_info_t *arch = arch_init();
     if (load_mips_object_file(argv[BIN_FILE_NAME], proc, START_ADDR)) {
-        DEBUG_PRINT("ERR %s: failed to load object file", __FUNCTION__);
+        ERR_PRINT("failed to load object file");
         cleanup(arch, proc);
         exit(1);
     }
-    
+
     // main exec loop
-    while (!terminate) {
+    terminate = FALSE;
+    while (terminate == FALSE) {
+        DEBUG_PRINT("\n");
         instr = proc->mem_space->memory[START_ADDR + i];
-        if (instr != 0) { // ensure not NOOP
+        if (0 != instr) { // ensure not NOOP
             dinstr = decode_instr(instr);
             arch->opcode_table->opcodes[dinstr.opcode](dinstr, proc);
         }
@@ -81,16 +83,16 @@ int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset) {
     
     // sanity check params
     if (fname == NULL || proc == NULL) {
-        DEBUG_PRINT("ERR %s: null args\n", __FUNCTION__);
+        ERR_PRINT("null args\n");
         return ERR_INVALID_ARGS;
     }
     if (addr_offset >= MEM_SIZE_IN_WORDS) {
-        DEBUG_PRINT("ERR %s: addr_offset %d too large\n", __FUNCTION__, addr_offset);
+        ERR_PRINT("addr_offset %d too large\n", addr_offset);
         return ERR_INVALID_ARGS;
     }
     
     if (file == NULL) {
-        DEBUG_PRINT("ERR %s: Failed to open %s\n", __FUNCTION__, fname);
+        ERR_PRINT("Failed to open %s\n", fname);
         return ERR_CANT_OPEN_FILE;
     }
     
@@ -98,18 +100,18 @@ int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset) {
     fseek(file, 0, SEEK_END);
     fsize = ftell(file);
     if (fsize >= (proc->mem_space->mem_words * proc->mem_space->word_size_bytes - addr_offset)) {
-        DEBUG_PRINT("ERR %s: File too large, not enough space in memory\n", __FUNCTION__);
+        ERR_PRINT("File too large, not enough space in memory\n");
         fclose(file);
         return ERR_FILE_TOO_LARGE;
     } else if (fsize > (proc->mem_space->mem_words * proc->mem_space->word_size_bytes) / 4) {
-        DEBUG_PRINT("ERR %s: Warning: file occupies more than 1/4 of memory\n", __FUNCTION__);
+        WARN_PRINT("file occupies more than 1/4 of memory\n");
     }
     rewind(file);
     
     // copy file contents into proc mem space
     result = fread(proc->mem_space->memory + addr_offset, 1, fsize, file);
     if (result != fsize) {
-        DEBUG_PRINT("ERR %s: Couldn't read file %s\n", __FUNCTION__, fname);
+        ERR_PRINT("Couldn't read file %s\n", fname);
         fclose(file);
         return ERR_FILE_READ;
     }
