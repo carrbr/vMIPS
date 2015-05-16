@@ -149,22 +149,27 @@ void alu_op(Decoded_instr_t instr, Process_t *proc) {
 
 void j_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void jal_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void beq_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void bne_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void addi_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void addiu_op(Decoded_instr_t instr, Process_t *proc) {
@@ -176,58 +181,68 @@ void addiu_op(Decoded_instr_t instr, Process_t *proc) {
 
 void slti_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void sltiu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void andi_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void ori_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void lui_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void mfc0_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void lw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void lbu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void lhu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void sb_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void sh_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void sw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT(" OP\n");
+    unimpl_op(instr, proc);
 }
 
 void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENT OPERATION: CRASHING\n");
-    exit(1); // TODO fix so we clean up properly
+    terminate = TRUE;
 }
-
-
 
 
 /*
@@ -235,26 +250,28 @@ void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
  */
 void alu_sll_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("SLL FUNC\n");
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_srl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("SRL FUNC\n");
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_sra_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_sllv_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
@@ -266,70 +283,71 @@ void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_mfhi_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_mflo_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_mult_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_multu_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_div_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("ADD FUNC\n");
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_sub_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_subu_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_and_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_or_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_nor_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_slt_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_sltu_op(Decoded_instr_t instr, Process_t *proc) {
-    
+    alu_unimpl_op(instr, proc);
 }
 
 void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENTED OPERATION: CRASHING\n");
-    exit(1); // TODO fix so we clean up properly
+    terminate = TRUE;
 }
