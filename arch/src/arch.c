@@ -1,7 +1,6 @@
 #include "vmips.h"
 #include "arch.h"
 #include "instrs.h"
-#include "debug.h"
 
 Decoded_instr_t decode_instr(Word32_t instr) {
 	Decoded_instr_t dinstr;

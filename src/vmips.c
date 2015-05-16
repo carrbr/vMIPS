@@ -3,8 +3,6 @@
 #include "vmips.h"
 #include "hardware.h"
 #include "instrs.h"
-#include "errors.h"
-#include "debug.h"
 
 void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
@@ -13,7 +11,7 @@ void init_processor(Process_t *proc);
 int terminate;
 
 int main(int argc, char *argv[]) {
-    int i;
+    int *pc; // pointer to program counter reg
     
     Word32_t instr;
     Decoded_instr_t dinstr;
@@ -26,23 +24,24 @@ int main(int argc, char *argv[]) {
 
     // begin init routines
     Process_t *proc = build_process();
-        Arch_info_t *arch = arch_init();
+    Arch_info_t *arch = arch_init();
     if (load_mips_object_file(argv[BIN_FILE_NAME], proc, START_ADDR)) {
         ERR_PRINT("failed to load object file");
         cleanup(arch, proc);
         exit(1);
     }
+    
+    pc = &(proc->reg_file->pc);
 
     // main exec loop
     terminate = FALSE;
     while (terminate == FALSE) {
         DEBUG_PRINT("\n");
-        instr = proc->mem_space->memory[START_ADDR + i];
+        instr = proc->mem_space->memory[START_ADDR + *pc];
         if (0 != instr) { // ensure not NOOP
             dinstr = decode_instr(instr);
             arch->opcode_table->opcodes[dinstr.opcode](dinstr, proc);
         }
-        i++;
     }
     
     cleanup(arch, proc);

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include "debug.h"
+#include "errors.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -22,3 +24,9 @@
 typedef uint32_t Word32_t;
 
 #define BIN_FILE_NAME 1
+
+/*
+ * System print and read functions for I/O from within the VM
+ */
+#define VMIPS_PRINT(...) fprintf(stdout, __VA_ARGS__);
+#define VMIPS_READ(...) fscanf(stdin, __VA_ARGS__);

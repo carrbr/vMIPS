@@ -2,7 +2,6 @@
 #include "vmips.h"
 #include "arch.h"
 #include "instrs.h"
-#include "debug.h"
 
 
 /*
@@ -177,6 +176,8 @@ void addiu_op(Decoded_instr_t instr, Process_t *proc) {
     // TODO add overflow checks
     print_decoded_instr(&instr);
     proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm;
+    
+    proc->reg_file->pc++;
 }
 
 void slti_op(Decoded_instr_t instr, Process_t *proc) {
@@ -274,12 +275,55 @@ void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
     alu_unimpl_op(instr, proc);
 }
 
+// SYSCALL ENUMS
+#define SYSCALL_PRINT_INT       1
+#define SYSCALL_PRINT_FLOAT     2
+#define SYSCALL_PRINT_DOUBLE    3
+#define SYSCALL_PRINT_STRING    4
+#define SYSCALL_READ_INT        5
+#define SYSCALL_READ_FLOAT      6
+#define SYSCALL_READ_DOUBLE     7
+#define SYSCALL_READ_STRING     8
+#define SYSCALL_SBRK            9
+#define SYSCALL_EXIT            10
+
 void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("SYSCALL FUNC\n");
-    if (proc->reg_file->regs[v0_REG] == 10) { // exit
-        DEBUG_PRINT("Exit Syscall\n");
-        terminate = TRUE;
+    
+    char *buffer_addr; // for use with the string calls
+    switch(proc->reg_file->regs[v0_REG]) {
+        case SYSCALL_PRINT_INT:
+            DEBUG_PRINT("Print Int Syscall\n");
+            VMIPS_PRINT("%d", proc->reg_file->regs[a0_REG]); // prints int in $a0
+            break;
+        case SYSCALL_PRINT_STRING:
+            DEBUG_PRINT("Print String Syscall\n");
+            buffer_addr = &(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
+            VMIPS_PRINT("%s", buffer_addr); // prints null-terminated string buffer at mem addr in $a0
+            break;
+        case SYSCALL_READ_INT:
+            DEBUG_PRINT("Read Int Syscall\n");
+            VMIPS_READ("%d", &(proc->reg_file->regs[v0_REG])); // reads int value into $v0
+            break;
+        case SYSCALL_READ_STRING:
+            DEBUG_PRINT("Read String Syscall\n");
+            int max_len = proc->reg_file->regs[a1_REG]; // $a1 contains maximum number of chars to read in
+            // can't dynamically specify string specifier so we'll generate it.  A bit hacky but whatever for now...
+            char format_string[20];
+            buffer_addr = &(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
+            sprintf(format_string, "%%%ds", max_len);
+            VMIPS_READ(format_string, buffer_addr); // store in buffer starting at addr in $a0
+            break;
+        case SYSCALL_EXIT:
+            DEBUG_PRINT("Exit Syscall\n");
+            terminate = TRUE;
+            break;
+        default:
+            ERR_PRINT("Unimplemented SYSCALL, 0x%X", proc->reg_file->regs[v0_REG]);
+            terminate = TRUE;
     }
+    
+    proc->reg_file->pc++;
 }
 
 void alu_mfhi_op(Decoded_instr_t instr, Process_t *proc) {
@@ -307,8 +351,10 @@ void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("ADD FUNC\n");
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("ADD FUNC\n"); // TODO check for overflow conditions
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] + proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {

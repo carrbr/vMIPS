@@ -10,6 +10,8 @@ void init_alu_func_table();
 
 // special register indexes
 #define v0_REG 2 // used for syscall identification
+#define a0_REG 4
+#define a1_REG 5
 #define sp_REG 29 // stack pointer
 #define fp_REG 30 // frame pointer
 
