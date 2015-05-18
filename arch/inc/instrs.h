@@ -10,10 +10,23 @@ void init_alu_func_table();
 
 // special register indexes
 #define v0_REG 2 // used for syscall identification
-#define a0_REG 4
+#define v1_REG 3
+#define a0_REG 4 // argument regs
 #define a1_REG 5
+#define a2_REG 6
 #define sp_REG 29 // stack pointer
 #define fp_REG 30 // frame pointer
+#define ra_REG 31 // return address
+
+/*
+ * Constants used by various instruction handlers
+ */
+#define BYTE_MASK 		0x000000FF
+#define BYTE_SIGN_MASK	0x00000080
+#define HWORD_MASK	 	0x0000FFFF
+#define HWORD_SIGN_MASK 0x00008000
+#define SIGN_EX_MASK	0xFFFFFFFF
+#define HWORD_SHIFT		16
 
 /*
  * Opcode Enums
@@ -31,6 +44,8 @@ void init_alu_func_table();
 #define ORI_OP		0x0D
 #define LUI_OP		0x0F
 #define MFC0_OP		0x10
+#define LB_OP		0x20
+#define LH_OP		0x21
 #define LW_OP		0x23
 #define LBU_OP		0x24
 #define LHU_OP		0x25
@@ -54,6 +69,8 @@ void andi_op(Decoded_instr_t instr, Process_t *proc);
 void ori_op(Decoded_instr_t instr, Process_t *proc);
 void lui_op(Decoded_instr_t instr, Process_t *proc);
 void mfc0_op(Decoded_instr_t instr, Process_t *proc);
+void lb_op(Decoded_instr_t instr, Process_t *proc);
+void lh_op(Decoded_instr_t instr, Process_t *proc);
 void lw_op(Decoded_instr_t instr, Process_t *proc);
 void lbu_op(Decoded_instr_t instr, Process_t *proc);
 void lhu_op(Decoded_instr_t instr, Process_t *proc);

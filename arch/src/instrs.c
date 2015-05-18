@@ -28,6 +28,8 @@ Opcode_table_t *init_opcode_table() {
     opcodes->opcodes[ORI_OP] = ori_op;
     opcodes->opcodes[LUI_OP] = lui_op;
     opcodes->opcodes[MFC0_OP] = mfc0_op;
+    opcodes->opcodes[LB_OP] = lb_op;
+    opcodes->opcodes[LH_OP] = lh_op;
     opcodes->opcodes[LW_OP] = lw_op;
     opcodes->opcodes[LBU_OP] = lbu_op;
     opcodes->opcodes[LHU_OP] = lhu_op;
@@ -60,8 +62,6 @@ Opcode_table_t *init_opcode_table() {
     opcodes->opcodes[0x1D] = unimpl_op;
     opcodes->opcodes[0x1E] = unimpl_op;
     opcodes->opcodes[0x1F] = unimpl_op;
-    opcodes->opcodes[0x20] = unimpl_op;
-    opcodes->opcodes[0x21] = unimpl_op;
     opcodes->opcodes[0x22] = unimpl_op;
     opcodes->opcodes[0x26] = unimpl_op;
     opcodes->opcodes[0x27] = unimpl_op;
@@ -132,33 +132,53 @@ void init_alu_func_table() {
  */
  
 void alu_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("ALU OP\n");
+    DEBUG_PRINT("\n");
     
     funcs[instr.instr.r.funct](instr, proc);
 }
 
+// preserves upper nibble of current PC
+#define JUMP_MASK 0xF0000000
+// makes sure that jumps are 4-byte word aligned, as 2^2 = 4
+#define JUMP_SHIFT 2
+
+// Unconditional Jump
 void j_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    if (0 <= instr.instr.j.addr && proc->mem_space->mem_words > instr.instr.j.addr) {
+        proc->reg_file->pc &= JUMP_MASK;
+        proc->reg_file->pc |= (instr.instr.j.addr << JUMP_SHIFT);
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
 }
 
+// Jump And Link
 void jal_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    if (0 <= instr.instr.j.addr && proc->mem_space->mem_words > instr.instr.j.addr) {
+        proc->reg_file->regs[ra_REG] = proc->reg_file->pc; // save pc so we can return
+        proc->reg_file->pc &= JUMP_MASK;
+        proc->reg_file->pc |= (instr.instr.j.addr << JUMP_SHIFT);
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
 }
 
 void beq_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
 }
 
 void bne_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
 }
 
 void addi_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
 }
 
@@ -172,63 +192,155 @@ void addiu_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void slti_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
 }
 
 void sltiu_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
 }
 
 void andi_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] & proc->reg_file->regs[instr.instr.i.imm];
+    
+    proc->reg_file->pc++;
 }
 
 void ori_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] | proc->reg_file->regs[instr.instr.i.imm];
+    
+    proc->reg_file->pc++;
 }
 
 void lui_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.i.t] = (instr.instr.i.imm << HWORD_SHIFT);
+    
+    proc->reg_file->pc++;
 }
 
 void mfc0_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
+    DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
+}
+
+void lb_op(Decoded_instr_t instr, Process_t *proc) {
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->regs[instr.instr.i.t] = BYTE_MASK;
+        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
+        if (proc->reg_file->regs[instr.instr.i.rt] & BYTE_SIGN_MASK) {
+            proc->reg_file->regs[instr.instr.i.rt] |= SIGN_EX_MASK;
+        }
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
+}
+
+void lh_op(Decoded_instr_t instr, Process_t *proc) {
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->regs[instr.instr.i.t] = HWORD_MASK;
+        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
+        if (proc->reg_file->regs[instr.instr.i.rt] & HWORD_SIGN_MASK) {
+            proc->reg_file->regs[instr.instr.i.rt] |= SIGN_EX_MASK;
+        }
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void lw_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->regs[instr.instr.i.rt] = proc->mem_space->memory[addr];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void lbu_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->regs[instr.instr.i.t] = BYTE_MASK;
+        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void lhu_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->regs[instr.instr.i.t] = HWORD_MASK;
+        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void sb_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->mem_space->memory[addr] = BYTE_MASK;
+        proc->mem_space->memory[addr] &= proc->reg_file->regs[instr.instr.i.rt];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void sh_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->mem_space->memory[addr] = HWORD_MASK;
+        proc->mem_space->memory[addr] &= proc->reg_file->regs[instr.instr.i.rt];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void sw_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT(" OP\n");
-    unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->mem_space->memory[addr] = proc->reg_file->regs[instr.instr.i.rt];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
@@ -263,7 +375,14 @@ void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    Word32_t addr = proc->reg_file->regs[instr.instr.r.rs];
+    if (0 <= addr && proc->mem_space->mem_words > addr) {
+        proc->reg_file->pc |= addr;
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
 }
 
 // SYSCALL ENUMS
@@ -289,7 +408,7 @@ void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
             break;
         case SYSCALL_PRINT_STRING:
             DEBUG_PRINT("Print String Syscall\n");
-            buffer_addr = &(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
+            buffer_addr = (char *)&(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
             VMIPS_PRINT("%s", buffer_addr); // prints null-terminated string buffer at mem addr in $a0
             break;
         case SYSCALL_READ_INT:
@@ -301,7 +420,7 @@ void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
             int max_len = proc->reg_file->regs[a1_REG]; // $a1 contains maximum number of chars to read in
             // can't dynamically specify string specifier so we'll generate it.  A bit hacky but whatever for now...
             char format_string[20];
-            buffer_addr = &(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
+            buffer_addr = (char *)&(proc->mem_space->memory[proc->reg_file->regs[a0_REG]]);
             sprintf(format_string, "%%%ds", max_len);
             VMIPS_READ(format_string, buffer_addr); // store in buffer starting at addr in $a0
             break;
@@ -384,7 +503,7 @@ void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
 void alu_nor_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] | proc->reg_file->regs[instr.instr.r.rt];
-    ~proc->reg_file->regs[instr.instr.r.rd];
+    proc->reg_file->regs[instr.instr.r.rd] = ~proc->reg_file->regs[instr.instr.r.rd];
     
     proc->reg_file->pc++;
 }
