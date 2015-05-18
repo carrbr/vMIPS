@@ -3,15 +3,6 @@
 #include "arch.h"
 #include "instrs.h"
 
-
-/*
- * Global Variable
- *
- * necessary so that the syscall routine can access it and determine if program
- * is terminating
- */
-extern int terminate;
-
 /*
  * abstraction of ALU's function handling.
  *
@@ -242,7 +233,7 @@ void sw_op(Decoded_instr_t instr, Process_t *proc) {
 
 void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENT OPERATION: CRASHING\n");
-    terminate = TRUE;
+    proc->terminate = TRUE;
 }
 
 
@@ -316,11 +307,11 @@ void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
             break;
         case SYSCALL_EXIT:
             DEBUG_PRINT("Exit Syscall\n");
-            terminate = TRUE;
+            proc->terminate = TRUE;
             break;
         default:
             ERR_PRINT("Unimplemented SYSCALL, 0x%X", proc->reg_file->regs[v0_REG]);
-            terminate = TRUE;
+            proc->terminate = TRUE;
     }
     
     proc->reg_file->pc++;
@@ -408,5 +399,5 @@ void alu_sltu_op(Decoded_instr_t instr, Process_t *proc) {
 
 void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENTED OPERATION: CRASHING\n");
-    terminate = TRUE;
+    proc->terminate = TRUE;
 }

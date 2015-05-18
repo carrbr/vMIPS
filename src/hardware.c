@@ -6,6 +6,7 @@ Reg_file_t *init_reg_file() {
     Reg_file_t *regs = malloc(sizeof *regs);
     regs->reg_size = REGISTER_WORD_SIZE;
     regs->num_regs = NUM_REGISTERS;
+    proc->reg_file->regs[0] = 0; // this reg is always $zero in real MIPS
     return regs;
 }
 

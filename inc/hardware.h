@@ -43,6 +43,7 @@ Memory_t *init_memory_space();
 typedef struct {
     Reg_file_t *reg_file;
     Memory_t *mem_space;
+    int terminate; // boolean flag to determine whether process will terminate or not
 } Process_t;
 
 Process_t *build_process();

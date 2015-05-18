@@ -8,8 +8,6 @@ void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
 void init_processor(Process_t *proc);
 
-int terminate;
-
 int main(int argc, char *argv[]) {
     int *pc; // pointer to program counter reg
     
@@ -34,8 +32,7 @@ int main(int argc, char *argv[]) {
     pc = &(proc->reg_file->pc);
 
     // main exec loop
-    terminate = FALSE;
-    while (terminate == FALSE) {
+    while (FALSE == proc->terminate) {
         DEBUG_PRINT("\n");
         instr = proc->mem_space->memory[START_ADDR + *pc];
         if (0 != instr) { // ensure not NOOP
@@ -60,8 +57,8 @@ Process_t *build_process() {
     // setup environment for code execution
     Process_t *proc = malloc(sizeof(Process_t));
     proc->reg_file = init_reg_file();
-    proc->reg_file->regs[0] = 0; // this reg is always $zero in real MIPS
     proc->mem_space = init_memory_space();
+    proc->terminate = FALSE; // obviously do not want to terminate immediately
     
     init_processor(proc);
     
