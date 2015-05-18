@@ -351,7 +351,7 @@ void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("ADD FUNC\n"); // TODO check for overflow conditions
+    DEBUG_PRINT("\n"); // TODO check for overflow conditions
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] + proc->reg_file->regs[instr.instr.r.rt];
     
     proc->reg_file->pc++;
@@ -370,19 +370,32 @@ void alu_subu_op(Decoded_instr_t instr, Process_t *proc) {
 }
 
 void alu_and_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] & proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_or_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] | proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] ^ proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_nor_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] | proc->reg_file->regs[instr.instr.r.rt];
+    ~proc->reg_file->regs[instr.instr.r.rd];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_slt_op(Decoded_instr_t instr, Process_t *proc) {
