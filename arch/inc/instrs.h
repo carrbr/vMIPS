@@ -25,7 +25,9 @@ void init_alu_func_table();
 #define BYTE_SIGN_MASK	0x00000080
 #define HWORD_MASK	 	0x0000FFFF
 #define HWORD_SIGN_MASK 0x00008000
+#define WORD_MASK	 	0xFFFFFFFF
 #define SIGN_EX_MASK	0xFFFFFFFF
+#define NO_SIGN_EX		0
 #define HWORD_SHIFT		16
 
 /*
@@ -79,6 +81,11 @@ void sh_op(Decoded_instr_t instr, Process_t *proc);
 void sw_op(Decoded_instr_t instr, Process_t *proc);
 void unimpl_op(Decoded_instr_t instr, Process_t *proc);
 
+/*
+ * load and store helper functions
+ */
+void load_unit(const Word32_t src_addr, const Word32_t dest_reg, Process_t *const proc, const int unit_mask, const int sign_extend_mask);
+void store_unit(const Word32_t src_reg, const Word32_t dest_addr, Process_t *const proc, const int unit_mask);
 
 /*
  * ALU Function Enums

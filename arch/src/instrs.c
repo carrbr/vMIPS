@@ -217,7 +217,7 @@ void ori_op(Decoded_instr_t instr, Process_t *proc) {
 
 void lui_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
-    proc->reg_file->regs[instr.instr.i.t] = (instr.instr.i.imm << HWORD_SHIFT);
+    proc->reg_file->regs[instr.instr.i.rt] = (instr.instr.i.imm << HWORD_SHIFT);
     
     proc->reg_file->pc++;
 }
@@ -230,16 +230,7 @@ void mfc0_op(Decoded_instr_t instr, Process_t *proc) {
 void lb_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->regs[instr.instr.i.t] = BYTE_MASK;
-        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
-        if (proc->reg_file->regs[instr.instr.i.rt] & BYTE_SIGN_MASK) {
-            proc->reg_file->regs[instr.instr.i.rt] |= SIGN_EX_MASK;
-        }
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    load_unit(addr, instr.instr.i.rt, proc, BYTE_MASK, BYTE_SIGN_MASK);
     
     proc->reg_file->pc++;
 }
@@ -247,16 +238,7 @@ void lb_op(Decoded_instr_t instr, Process_t *proc) {
 void lh_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->regs[instr.instr.i.t] = HWORD_MASK;
-        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
-        if (proc->reg_file->regs[instr.instr.i.rt] & HWORD_SIGN_MASK) {
-            proc->reg_file->regs[instr.instr.i.rt] |= SIGN_EX_MASK;
-        }
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    load_unit(addr, instr.instr.i.rt, proc, HWORD_MASK, HWORD_SIGN_MASK);
     
     proc->reg_file->pc++;
 }
@@ -264,12 +246,7 @@ void lh_op(Decoded_instr_t instr, Process_t *proc) {
 void lw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->regs[instr.instr.i.rt] = proc->mem_space->memory[addr];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    load_unit(addr, instr.instr.i.rt, proc, WORD_MASK, NO_SIGN_EX);
     
     proc->reg_file->pc++;
 }
@@ -277,13 +254,7 @@ void lw_op(Decoded_instr_t instr, Process_t *proc) {
 void lbu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->regs[instr.instr.i.t] = BYTE_MASK;
-        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    load_unit(addr, instr.instr.i.rt, proc, BYTE_MASK, NO_SIGN_EX);
     
     proc->reg_file->pc++;
 }
@@ -291,13 +262,7 @@ void lbu_op(Decoded_instr_t instr, Process_t *proc) {
 void lhu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->regs[instr.instr.i.t] = HWORD_MASK;
-        proc->reg_file->regs[instr.instr.i.rt] &= proc->mem_space->memory[addr];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    load_unit(addr, instr.instr.i.rt, proc, HWORD_MASK, NO_SIGN_EX);
     
     proc->reg_file->pc++;
 }
@@ -305,13 +270,7 @@ void lhu_op(Decoded_instr_t instr, Process_t *proc) {
 void sb_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->mem_space->memory[addr] = BYTE_MASK;
-        proc->mem_space->memory[addr] &= proc->reg_file->regs[instr.instr.i.rt];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    store_unit(instr.instr.i.rt, addr, proc, BYTE_MASK);
     
     proc->reg_file->pc++;
 }
@@ -319,13 +278,7 @@ void sb_op(Decoded_instr_t instr, Process_t *proc) {
 void sh_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->mem_space->memory[addr] = HWORD_MASK;
-        proc->mem_space->memory[addr] &= proc->reg_file->regs[instr.instr.i.rt];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
+    store_unit(instr.instr.i.rt, addr, proc, HWORD_MASK);
     
     proc->reg_file->pc++;
 }
@@ -333,13 +286,8 @@ void sh_op(Decoded_instr_t instr, Process_t *proc) {
 void sw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
-    if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->mem_space->memory[addr] = proc->reg_file->regs[instr.instr.i.rt];
-    } else {
-        ERR_PRINT("Invalid Memory Address, out of bounds\n");
-        proc->terminate = TRUE;
-    }
-    
+    store_unit(instr.instr.i.rt, addr, proc, WORD_MASK);
+ 
     proc->reg_file->pc++;
 }
 
@@ -348,6 +296,39 @@ void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     proc->terminate = TRUE;
 }
 
+/*
+ * helper func for loading and storing data
+ */
+void load_unit(const Word32_t src_addr, const Word32_t dest_reg, Process_t *const proc, const int unit_mask, const int sign_extend_mask) {
+    if (0 <= src_addr && proc->mem_space->mem_words > src_addr) {
+        /*
+         * perform sign extension if necessary
+         *
+         * The NO_SIGN_EX macro should be passed as sign_extend_mask if no sign extension is to be performed.
+         * This will ensure that this if condition fails, and thus we will initialize the word to 0x00000000
+         * instead of 0xFFFFFFFF.
+         */
+        if (proc->mem_space->memory[src_addr] & unit_mask & sign_extend_mask) {
+            proc->reg_file->regs[dest_reg] = SIGN_EX_MASK;      
+        } else {
+            proc->reg_file->regs[dest_reg] = unit_mask;
+        }
+        proc->reg_file->regs[dest_reg] &= proc->mem_space->memory[src_addr];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+}
+
+void store_unit(const Word32_t src_reg, const Word32_t dest_addr, Process_t *const proc, const int unit_mask) {
+    if (0 <= dest_addr && proc->mem_space->mem_words > dest_addr) {
+        proc->mem_space->memory[dest_addr] = unit_mask;
+        proc->mem_space->memory[dest_addr] &= proc->reg_file->regs[src_reg];
+    } else {
+        ERR_PRINT("Invalid Memory Address, out of bounds\n");
+        proc->terminate = TRUE;
+    }
+}
 
 /*
  * ALU function implementations
