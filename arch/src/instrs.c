@@ -131,6 +131,7 @@ void init_alu_func_table() {
  * Opcode handler implementations
  */
  
+ // handler for all ALU functions
 void alu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     
@@ -154,11 +155,11 @@ void j_op(Decoded_instr_t instr, Process_t *proc) {
     }
 }
 
-// Jump And Link
+// Jump And Link, stores PC + 4 to return to
 void jal_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     if (0 <= instr.instr.j.addr && proc->mem_space->mem_words > instr.instr.j.addr) {
-        proc->reg_file->regs[ra_REG] = proc->reg_file->pc; // save pc so we can return
+        proc->reg_file->regs[ra_REG] = proc->reg_file->pc + MEM_WORD_SIZE_BYTES; // save pc so we can return
         proc->reg_file->pc &= JUMP_MASK;
         proc->reg_file->pc |= (instr.instr.j.addr << JUMP_SHIFT);
     } else {
@@ -182,10 +183,9 @@ void addi_op(Decoded_instr_t instr, Process_t *proc) {
     unimpl_op(instr, proc);
 }
 
+// Unsigned addition with immediate -- ignores overflow
 void addiu_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("ADDIU OP\n");
-    // TODO add overflow checks
-    print_decoded_instr(&instr);
+    DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm;
     
     proc->reg_file->pc++;
@@ -201,6 +201,7 @@ void sltiu_op(Decoded_instr_t instr, Process_t *proc) {
     unimpl_op(instr, proc);
 }
 
+// And with immediate 
 void andi_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] & proc->reg_file->regs[instr.instr.i.imm];
@@ -208,6 +209,7 @@ void andi_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Or with immediate
 void ori_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] | proc->reg_file->regs[instr.instr.i.imm];
@@ -215,6 +217,7 @@ void ori_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Load upper immediate, stores immediate ad most significant halfword, and zeros out the least significant half word
 void lui_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.i.rt] = (instr.instr.i.imm << HWORD_SHIFT);
@@ -227,6 +230,7 @@ void mfc0_op(Decoded_instr_t instr, Process_t *proc) {
     unimpl_op(instr, proc);
 }
 
+// Load byte unsigned, least significant bits, sign extension performed
 void lb_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -235,6 +239,7 @@ void lb_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Load halfword, least significant 16 bits, sign extension performed
 void lh_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -243,6 +248,7 @@ void lh_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Load word
 void lw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -251,6 +257,7 @@ void lw_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Load byte unsigned, least significant 8 bits, no sign extension
 void lbu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -259,6 +266,7 @@ void lbu_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Load halfword unsigned, least significant 16 bits, no sign extension
 void lhu_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -267,6 +275,7 @@ void lhu_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Store byte, least significant 8 bits
 void sb_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -275,6 +284,7 @@ void sb_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Store halfword, least significant 16 bits
 void sh_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -283,6 +293,7 @@ void sh_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Store word
 void sw_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm; // add offset to base addr in reg
@@ -291,6 +302,7 @@ void sw_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// unimplemented instruction handler -- terminates program
 void unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENT OPERATION: CRASHING\n");
     proc->terminate = TRUE;
@@ -334,12 +346,12 @@ void store_unit(const Word32_t src_reg, const Word32_t dest_addr, Process_t *con
  * ALU function implementations
  */
 void alu_sll_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("SLL FUNC\n");
+    DEBUG_PRINT("\n");
     alu_unimpl_op(instr, proc);
 }
 
 void alu_srl_op(Decoded_instr_t instr, Process_t *proc) {
-    DEBUG_PRINT("SRL FUNC\n");
+    DEBUG_PRINT("\n");
     alu_unimpl_op(instr, proc);
 }
 
@@ -355,11 +367,12 @@ void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
     alu_unimpl_op(instr, proc);
 }
 
+// Jump to address contained in register
 void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     Word32_t addr = proc->reg_file->regs[instr.instr.r.rs];
     if (0 <= addr && proc->mem_space->mem_words > addr) {
-        proc->reg_file->pc |= addr;
+        proc->reg_file->pc = addr;
     } else {
         ERR_PRINT("Invalid Memory Address, out of bounds\n");
         proc->terminate = TRUE;
@@ -378,6 +391,7 @@ void alu_jr_op(Decoded_instr_t instr, Process_t *proc) {
 #define SYSCALL_SBRK            9
 #define SYSCALL_EXIT            10
 
+// Syscall handler
 void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("SYSCALL FUNC\n");
     
@@ -448,18 +462,31 @@ void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Unisgned addition -- ignores overflow
 void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] + proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
+// Signed subtraction
 void alu_sub_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n"); // TODO check for overflow
+    proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm;
+    
+    proc->reg_file->pc++;
 }
 
+// Unsigned subtractrion -- ignores overflow
 void alu_subu_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] - proc->reg_file->regs[instr.instr.r.rt];
+    
+    proc->reg_file->pc++;
 }
 
+// Bitwise and
 void alu_and_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] & proc->reg_file->regs[instr.instr.r.rt];
@@ -467,6 +494,7 @@ void alu_and_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Bitwise or
 void alu_or_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] | proc->reg_file->regs[instr.instr.r.rt];
@@ -474,6 +502,7 @@ void alu_or_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Bitwise xor
 void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] ^ proc->reg_file->regs[instr.instr.r.rt];
@@ -481,6 +510,7 @@ void alu_xor_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Bitwise nor
 void alu_nor_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] | proc->reg_file->regs[instr.instr.r.rt];
@@ -497,6 +527,7 @@ void alu_sltu_op(Decoded_instr_t instr, Process_t *proc) {
     alu_unimpl_op(instr, proc);
 }
 
+// unimplemented operation handler -- simply terminates program
 void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENTED OPERATION: CRASHING\n");
     proc->terminate = TRUE;

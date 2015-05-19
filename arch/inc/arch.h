@@ -13,6 +13,7 @@
  */
 #define MEM_SIZE_IN_WORDS 0x4000
 #define MEM_WORD_SIZE 32
+#define MEM_WORD_SIZE_BYTES 4
 #define START_ADDR 0x00000000 // address will first instruction to exec will be loaded
 
 /*
