@@ -225,6 +225,7 @@ void lui_op(Decoded_instr_t instr, Process_t *proc) {
     proc->reg_file->pc++;
 }
 
+// Don't have coprocessors in this vm, at least for now
 void mfc0_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
     unimpl_op(instr, proc);
@@ -345,26 +346,63 @@ void store_unit(const Word32_t src_reg, const Word32_t dest_addr, Process_t *con
 /*
  * ALU function implementations
  */
+ 
+ // Shift left logical
 void alu_sll_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
-    alu_unimpl_op(instr, proc);
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] << instr.instr.r.shamt;
+    
+    proc->reg_file->pc++;
 }
 
+/*
+ * These masks are used to make sure we set the bits shifted in on a right shift properly
+ * as it is implementation defined according to the C standard whether zeros or the sign
+ * bit are shifted in on a right shift
+ */
+#define BIT_MASK_ONES     0xFFFFFFFF
+#define MSB_MASK            0x80000000 // most significant bit
+
+// Shift right logical -- zeros shifted in
 void alu_srl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
-    alu_unimpl_op(instr, proc);
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] >> instr.instr.r.shamt;
+    
+    // make sure shifted in bit is correct
+    if (MSB_MASK & proc->reg_file->regs[instr.instr.r.rt]) {
+        // MSB = 1, need to shift in zeros because logical shift
+        proc->reg_file->regs[instr.instr.r.rd] &= BIT_MASK_ONES >> instr.instr.r.shamt;
+    }
+    
+    proc->reg_file->pc++;
 }
 
+// Shift right arithmetic -- sign bit shifted in
 void alu_sra_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] >> instr.instr.r.shamt;
+    
+    // make sure shifted in bit is correct
+    if (MSB_MASK & proc->reg_file->regs[instr.instr.r.rt]) {
+        // MSB = 1, need to shift in ones
+        proc->reg_file->regs[instr.instr.r.rd] |= BIT_MASK_ONES << (proc->mem_space->word_size - instr.instr.r.shamt);
+    }
+    
+    proc->reg_file->pc++;
 }
 
 void alu_sllv_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] << proc->reg_file->regs[instr.instr.r.rs];
+    
+    proc->reg_file->pc++;
 }
 
 void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
-    alu_unimpl_op(instr, proc);
+    DEBUG_PRINT("\n");
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] >> proc->reg_file->regs[instr.instr.r.rs];
+    
+    proc->reg_file->pc++;
 }
 
 // Jump to address contained in register
