@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdlib.h>
-#include "vmips.h"
-// this is user-defined architecture configuration parameters
-#include "arch.h"
+#include <stdlib.h> 
+#include "vmips.h" 
+
+#include "arch.h" 
 
 
 /*
@@ -68,8 +68,4 @@ typedef struct {
     Opcode_table_t *opcode_table;
 } Arch_info_t;
 
-/*
-TODO: implement this
-should return a struct with info about the platform, including at least endian-ness
- */
 Arch_info_t *arch_init();

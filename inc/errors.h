@@ -2,6 +2,7 @@
 #define ERR_FILE_TOO_LARGE 	-2
 #define ERR_INVALID_ARGS	-3
 #define ERR_FILE_READ		-4
+#define ERR_FILE			-5
 
 // special error print function
 #define ERROR

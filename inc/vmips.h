@@ -1,8 +1,15 @@
 #pragma once
 
-#include <stdint.h>
-#include "debug.h"
-#include "errors.h"
+/*
+ * TODO: investigate this further
+ * temporary solution for warnings in windows builds
+ */
+#define _CRT_SECURE_NO_DEPRECATE
+#include <stdio.h> 
+#include <stdlib.h>
+#include <stdint.h> 
+#include "debug.h" 
+#include "errors.h" 
 
 #define TRUE 1
 #define FALSE 0

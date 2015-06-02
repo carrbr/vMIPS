@@ -1,6 +1,7 @@
-#include <stdlib.h>
-#include "hardware.h"
-#include "instrs.h"
+#include <stdlib.h> 
+#include "hardware.h" 
+#include "instrs.h" 
+
 
 Reg_file_t *init_reg_file() {
     Reg_file_t *regs = malloc(sizeof *regs);

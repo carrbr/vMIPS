@@ -1,15 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "vmips.h"
-#include "hardware.h"
-#include "instrs.h"
+#include "vmips.h" 
+#include "hardware.h" 
+#include "instrs.h" 
 
 void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
 void init_processor(Process_t *proc);
 
 int main(int argc, char *argv[]) {
-    int *pc; // pointer to program counter reg
+    Word32_t *pc; // pointer to program counter reg
     
     Word32_t instr;
     Decoded_instr_t dinstr;
@@ -95,11 +93,15 @@ int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset) {
     // get file size and check if we have enough space
     fseek(file, 0, SEEK_END);
     fsize = ftell(file);
-    if (fsize >= (proc->mem_space->mem_words * proc->mem_space->word_size_bytes - addr_offset)) {
+    if (fsize == -1) {
+        ERR_PRINT("Failed to read file size\n");
+        return ERR_FILE;
+    }
+    if ((unsigned long) fsize >= (proc->mem_space->mem_words * proc->mem_space->word_size_bytes - addr_offset)) {
         ERR_PRINT("File too large, not enough space in memory\n");
         fclose(file);
         return ERR_FILE_TOO_LARGE;
-    } else if (fsize > (proc->mem_space->mem_words * proc->mem_space->word_size_bytes) / 4) {
+    } else if ((unsigned long) fsize > (proc->mem_space->mem_words * proc->mem_space->word_size_bytes) / 4) {
         WARN_PRINT("file occupies more than 1/4 of memory\n");
     }
     rewind(file);

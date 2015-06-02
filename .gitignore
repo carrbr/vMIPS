@@ -1,9 +1,10 @@
-# Object files
+# Object and other compiler generated files
 vmips
 *.o
 *.ko
 *.obj
 *.elf
+*.i
 
 # Precompiled Headers
 *.gch

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "hardware.h"
-
-
+ 
 Opcode_table_t *init_opcode_table();
 void init_alu_func_table();
 

@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include "vmips.h"
-#include "arch.h"
-#include "instrs.h"
+#include "vmips.h" 
+#include "arch.h" 
+#include "instrs.h" 
+
 
 /*
  * abstraction of ALU's function handling.
