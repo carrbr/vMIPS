@@ -5,6 +5,7 @@ vmips
 *.obj
 *.elf
 *.i
+*.pdb
 
 # Precompiled Headers
 *.gch
