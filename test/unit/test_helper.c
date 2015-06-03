@@ -42,22 +42,22 @@ Decoded_instr_t build_decoded_instr(const unsigned short type, const unsigned sh
 
 void test_instr(const Decoded_instr_t dinstr, const int type, const int op, const int rs, const int rt, \
 		const int rd, const int shamt, const int funct, const int imm, const int addr) {
-	TEST_ASSERT_EQUAL_MESSAGE(type, dinstr.instr_type, "instruction type mismatch");
-	TEST_ASSERT_EQUAL_MESSAGE(op, dinstr.opcode, "bad opcode");
+	TEST_ASSERT_EQUAL_MESSAGE(type, dinstr.instr_type, "instruction type mismatch\n");
+	TEST_ASSERT_EQUAL_MESSAGE(op, dinstr.opcode, "bad opcode\n");
 	if (R_TYPE == dinstr.instr_type) {
-		TEST_ASSERT_EQUAL_MESSAGE(rs, dinstr.instr.r.rs, "bad rs");
-		TEST_ASSERT_EQUAL_MESSAGE(rt, dinstr.instr.r.rt, "bad rt");
-		TEST_ASSERT_EQUAL_MESSAGE(rd, dinstr.instr.r.rd, "bad rd");
-		TEST_ASSERT_EQUAL_MESSAGE(shamt, dinstr.instr.r.shamt, "bad shamt");
-		TEST_ASSERT_EQUAL_MESSAGE(funct, dinstr.instr.r.funct, "bad funct");
+		TEST_ASSERT_EQUAL_MESSAGE(rs, dinstr.instr.r.rs, "bad rs\n");
+		TEST_ASSERT_EQUAL_MESSAGE(rt, dinstr.instr.r.rt, "bad rt\n");
+		TEST_ASSERT_EQUAL_MESSAGE(rd, dinstr.instr.r.rd, "bad rd\n");
+		TEST_ASSERT_EQUAL_MESSAGE(shamt, dinstr.instr.r.shamt, "bad shamt\n");
+		TEST_ASSERT_EQUAL_MESSAGE(funct, dinstr.instr.r.funct, "bad funct\n");
 	} else if (I_TYPE == dinstr.instr_type) {
-		TEST_ASSERT_EQUAL_MESSAGE(rs, dinstr.instr.i.rs, "bad rs");
-		TEST_ASSERT_EQUAL_MESSAGE(rt, dinstr.instr.i.rt, "bad rt");
-		TEST_ASSERT_EQUAL_MESSAGE(imm, dinstr.instr.i.imm, "bad immediate");
+		TEST_ASSERT_EQUAL_MESSAGE(rs, dinstr.instr.i.rs, "bad rs\n");
+		TEST_ASSERT_EQUAL_MESSAGE(rt, dinstr.instr.i.rt, "bad rt\n");
+		TEST_ASSERT_EQUAL_MESSAGE(imm, dinstr.instr.i.imm, "bad immediate\n");
 	} else if (J_TYPE == dinstr.instr_type) {
-		TEST_ASSERT_EQUAL_MESSAGE(addr, dinstr.instr.j.addr, "bad address");
+		TEST_ASSERT_EQUAL_MESSAGE(addr, dinstr.instr.j.addr, "bad address\n");
 	} else {
-		TEST_FAIL_MESSAGE("Invalid instruction type");
+		TEST_FAIL_MESSAGE("Invalid instruction type\n");
 	}
 }
 
