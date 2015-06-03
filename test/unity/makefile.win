@@ -2,14 +2,15 @@ CC=cl.exe
 CFLAGS_TEST=/TC /Od /Zi /W4
 SRC_DIR=src
 OBJ_DIR=..\..\obj
+DEBUG_OBJ_DIR=..\..\debug_obj
 FIXTURE_DIR=extras\fixture\src
 
 # not ideal but it works for now
-DEBUG_OBJS=$(OBJ_DIR)\unity.dobj $(OBJ_DIR)\unity_fixture.dobj
+DEBUG_OBJS=$(DEBUG_OBJ_DIR)\unity.obj $(DEBUG_OBJ_DIR)\unity_fixture.obj
 
 all: $(DEBUG_OBJS)
 
-{$(SRC_DIR)\}.c{$(OBJ_DIR)\}.dobj:
+{$(SRC_DIR)\}.c{$(DEBUG_OBJ_DIR)\}.obj:
 	$(CC) $(CFLAGS_TEST) /c /Fo$@ $**
-{$(FIXTURE_DIR)\}.c{$(OBJ_DIR)\}.dobj:
+{$(FIXTURE_DIR)\}.c{$(DEBUG_OBJ_DIR)\}.obj:
 	$(CC) $(CFLAGS_TEST) /c /Fo$@ $** /I $(SRC_DIR)

@@ -69,3 +69,5 @@ typedef struct {
 } Arch_info_t;
 
 Arch_info_t *arch_init();
+
+void cleanup(Arch_info_t *arch, Process_t *proc);

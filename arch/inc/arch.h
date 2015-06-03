@@ -64,8 +64,8 @@ typedef struct {
  * contains decoded instr information
  */
 typedef struct {
-    short opcode;
-    short instr_type;
+    unsigned short opcode;
+    unsigned short instr_type;
     union info {
         r_type_t r;
         i_type_t i;

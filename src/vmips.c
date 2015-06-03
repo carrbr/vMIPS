@@ -2,9 +2,7 @@
 #include "hardware.h" 
 #include "instrs.h" 
 
-void cleanup(Arch_info_t *arch, Process_t *proc);
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset);
-void init_processor(Process_t *proc);
 
 int main(int argc, char *argv[]) {
     Word32_t *pc; // pointer to program counter reg
@@ -20,7 +18,15 @@ int main(int argc, char *argv[]) {
 
     // begin init routines
     Process_t *proc = build_process();
+    if (proc == NULL || proc->reg_file == NULL || proc->mem_space == NULL) {
+        ERR_PRINT("Could not build process... crashing\n");
+        cleanup(NULL, proc);   
+    }
     Arch_info_t *arch = arch_init();
+    if (arch == NULL || arch->opcode_table == NULL) {
+        ERR_PRINT("Could not build arch info... crashing\n");
+        cleanup(arch, proc);   
+    }
     if (load_mips_object_file(argv[BIN_FILE_NAME], proc, START_ADDR)) {
         ERR_PRINT("failed to load object file");
         cleanup(arch, proc);
@@ -41,33 +47,6 @@ int main(int argc, char *argv[]) {
     
     cleanup(arch, proc);
     return 0;
-}
-
-void cleanup(Arch_info_t *arch, Process_t *proc) {
-    free(arch->opcode_table);
-    free(arch);
-    free(proc->mem_space);
-    free(proc->reg_file);
-    free(proc);
-}
-
-Process_t *build_process() {    
-    // setup environment for code execution
-    Process_t *proc = malloc(sizeof(Process_t));
-    proc->reg_file = init_reg_file();
-    proc->mem_space = init_memory_space();
-    proc->terminate = FALSE; // obviously do not want to terminate immediately
-    
-    init_processor(proc);
-    
-    return proc;
-}
-
-void init_processor(Process_t *proc) {
-    proc->reg_file->status = 0;
-    proc->reg_file->pc = START_ADDR;
-    proc->reg_file->regs[sp_REG] = proc->mem_space->word_size - 1; // start stack at top of mem space
-    proc->reg_file->regs[fp_REG] = proc->reg_file->regs[sp_REG]; 
 }
 
 int load_mips_object_file(char *fname, Process_t *proc, uint32_t addr_offset) {
