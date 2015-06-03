@@ -393,14 +393,22 @@ void alu_sra_op(Decoded_instr_t instr, Process_t *proc) {
 
 void alu_sllv_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
-    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] << proc->reg_file->regs[instr.instr.r.rs];
+    if (proc->reg_file->regs[instr.instr.r.rs] < WORD_SIZE) {
+        proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] << proc->reg_file->regs[instr.instr.r.rs];
+    } else { // handle overflow case
+        proc->reg_file->regs[instr.instr.r.rd] = 0;
+    }
     
     proc->reg_file->pc++;
 }
 
 void alu_srlv_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n");
-    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] >> proc->reg_file->regs[instr.instr.r.rs];
+    if (proc->reg_file->regs[instr.instr.r.rs] < WORD_SIZE) {
+        proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rt] >> proc->reg_file->regs[instr.instr.r.rs];
+    } else { // handle overflow case
+        proc->reg_file->regs[instr.instr.r.rd] = 0;
+    }
     
     proc->reg_file->pc++;
 }

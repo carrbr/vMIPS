@@ -22,3 +22,7 @@ Decoded_instr_t build_decoded_instr(const unsigned short type, const unsigned sh
 void test_instr(const Decoded_instr_t dinstr, const int type, const int op, const int rs, const int rt, \
 		const int rd, const int shamt, const int funct, const int imm, const int addr);
 void test_reg_result(Process_t *proc, const unsigned short reg_num, const Word32_t val);
+void init_regs(Process_t *proc, const unsigned short rs, const Word32_t rs_value, const unsigned short rt, \
+        const Word32_t rt_value, const unsigned short rd, const Word32_t rd_value, const int pc);
+void test_alu_results(Process_t *proc, const unsigned short rs, const Word32_t rs_value, const unsigned short rt, \
+        const Word32_t rt_value, const unsigned short rd, const Word32_t rd_value, const int pc);
