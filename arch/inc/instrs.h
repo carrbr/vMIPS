@@ -141,3 +141,6 @@ void alu_xor_op(Decoded_instr_t instr, Process_t *proc);
 void alu_nor_op(Decoded_instr_t instr, Process_t *proc);
 void alu_slt_op(Decoded_instr_t instr, Process_t *proc);
 void alu_sltu_op(Decoded_instr_t instr, Process_t *proc);
+
+// helper functions
+int64_t safe_cast_int32_to_int64(const int32_t n);

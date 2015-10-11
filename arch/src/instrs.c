@@ -503,7 +503,19 @@ void alu_divu_op(Decoded_instr_t instr, Process_t *proc) {
 
 void alu_add_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n"); // TODO check for overflow conditions
-    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] + proc->reg_file->regs[instr.instr.r.rt];
+
+    // TODO: move this into a central addition routine
+    // the if branches all currently do the same thing, return overflow or not
+    int64_t t1 = safe_cast_int32_to_int64(proc->reg_file->regs[instr.instr.r.rs]);
+    int64_t t2 = safe_cast_int32_to_int64(proc->reg_file->regs[instr.instr.r.rt]);
+    int64_t double_size_result = t1 + t2;
+    if (double_size_result > MAX_INT) { // overflow, number too large
+        proc->reg_file->regs[instr.instr.r.rd] = (int32_t)double_size_result;
+    } else if (double_size_result < MIN_INT) { // overflow, number too negative
+        proc->reg_file->regs[instr.instr.r.rd] = (int32_t)double_size_result;
+    } else { // no overflow
+        proc->reg_file->regs[instr.instr.r.rd] = (int32_t)double_size_result;
+    }
     
     proc->reg_file->pc++;
 }
@@ -519,7 +531,7 @@ void alu_addu_op(Decoded_instr_t instr, Process_t *proc) {
 // Signed subtraction
 void alu_sub_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("\n"); // TODO check for overflow
-    proc->reg_file->regs[instr.instr.i.rt] = proc->reg_file->regs[instr.instr.i.rs] + instr.instr.i.imm;
+    proc->reg_file->regs[instr.instr.r.rd] = proc->reg_file->regs[instr.instr.r.rs] - proc->reg_file->regs[instr.instr.r.rt];
     
     proc->reg_file->pc++;
 }
@@ -576,4 +588,16 @@ void alu_sltu_op(Decoded_instr_t instr, Process_t *proc) {
 void alu_unimpl_op(Decoded_instr_t instr, Process_t *proc) {
     DEBUG_PRINT("UNIMPLEMENTED OPERATION: CRASHING\n");
     proc->terminate = TRUE;
+}
+
+/*
+ * Helper Functions
+ */
+#define SIGN_EXTENSION_MASK_32_to_64 0xFFFFFFFF00000000
+int64_t safe_cast_int32_to_int64(const int32_t n) {
+    if (n >= 0) {
+        return (int64_t) n;
+    } else { // need to perform sign extension
+        return ((int64_t) n) | SIGN_EXTENSION_MASK_32_to_64;
+    }
 }

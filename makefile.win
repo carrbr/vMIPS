@@ -21,7 +21,8 @@ TEST_OBJS=$(DEBUG_OBJ_DIR)\test_runner.obj \
 		$(DEBUG_OBJ_DIR)\arch_test.obj \
 		$(DEBUG_OBJ_DIR)\test_helper.obj \
 		$(DEBUG_OBJ_DIR)\alu_logical_test.obj \
-		$(DEBUG_OBJ_DIR)\alu_shift_test.obj
+		$(DEBUG_OBJ_DIR)\alu_shift_test.obj \
+		$(DEBUG_OBJ_DIR)\alu_arithmetic_test.obj
 
 UNITY_DIR=test\unity
 UNITY_OBJS=$(DEBUG_OBJ_DIR)\unity.obj $(DEBUG_OBJ_DIR)\unity_fixture.obj

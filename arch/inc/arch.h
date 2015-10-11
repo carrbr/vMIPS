@@ -93,3 +93,11 @@ void print_decoded_instr(const Decoded_instr_t *di);
 
 #define ADDR_MASK 0x03FFFFFF
 #define ADDR_WIDTH
+
+/*
+ * Some useful numerical constants
+ */
+const extern int32_t MAX_INT;
+const extern uint32_t U_MAX_INT;
+const extern int32_t MIN_INT;
+const extern uint32_t U_MIN_INT;
