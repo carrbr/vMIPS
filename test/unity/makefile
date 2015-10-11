@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS_TEST=-g -Wall
+CFLAGS_TEST=-g -Wall -Wpedantic -Werror
 SRC_DIR=src
 OBJ_DIR=../../obj
 DEBUG_OBJ_DIR=../../debug_obj

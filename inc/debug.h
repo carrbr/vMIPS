@@ -1,14 +1,11 @@
-//#define DEBUG
-#ifdef DEBUG
-extern int debug_var = 0;
-#define DEBUG_PRINT(...) debug_var += printf("%s: ", __FUNCTION__);debug_var += printf(__VA_ARGS__)
-#else
-#define DEBUG_PRINT ;//
-#endif
+#pragma once
 
+// uncomment to enable debug prints
+//#define DEBUG
+void debug_impl(char *format_str, ...);
+#define DEBUG_PRINT(...) debug_impl(__VA_ARGS__);
+
+// uncomment to enable debug2 prints
 //#define DEBUG2
-#ifdef DEBUG2
-#define DEBUG2_PRINT(...) printf("%s: ", __FUNCTION__);printf(__VA_ARGS__)
-#else
-#define DEBUG2_PRINT ;//
-#endif
+void debug2_impl(char *format_str, ...);
+#define DEBUG2_PRINT(...) debug2_impl(__VA_ARGS__);

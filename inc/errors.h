@@ -7,7 +7,7 @@
 // special error print function
 #define ERROR
 #ifdef ERROR
-#define ERR_PRINT(...) fprintf(stderr, "ERROR %s: ", __FUNCTION__);fprintf(stderr, __VA_ARGS__)
+#define ERR_PRINT(...) fprintf(stderr, "ERROR %s: ", __extension__ __FUNCTION__);fprintf(stderr, __VA_ARGS__)
 #else
 #define ERR_PRINT(...) ; //
 #endif
@@ -15,7 +15,7 @@
 // special warning print function
 #define WARN
 #ifdef WARN
-#define WARN_PRINT(...) fprintf(stderr, "WARNING %s: ", __FUNCTION__);fprintf(stderr, __VA_ARGS__)
+#define WARN_PRINT(...) fprintf(stderr, "WARNING %s: ", __extension__ __FUNCTION__);fprintf(stderr, __VA_ARGS__)
 #else
 #define WARN_PRINT(...) ; //
 #endif

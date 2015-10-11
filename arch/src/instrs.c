@@ -454,7 +454,7 @@ void alu_syscall_op(Decoded_instr_t instr, Process_t *proc) {
             break;
         case SYSCALL_READ_INT:
             DEBUG_PRINT("Read Int Syscall\n");
-            VMIPS_READ("%d", &(proc->reg_file->regs[v0_REG])); // reads int value into $v0
+            VMIPS_READ("%d", (int*)&(proc->reg_file->regs[v0_REG])); // reads int value into $v0
             break;
         case SYSCALL_READ_STRING:
             DEBUG_PRINT("Read String Syscall\n");

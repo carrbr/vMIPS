@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-O3 -lm -Wall
-CFLAGS_TEST=-g -Wall
+CFLAGS=-O3 -lm -Wall -Wpedantic -Werror
+CFLAGS_TEST=-g -Wall -Wpedantic -Werror
 OBJ_DIR=obj
 DEBUG_OBJ_DIR=debug_obj
 INC_DIR=inc
@@ -21,7 +21,7 @@ TEST_INC_DIR_FIXTURE=test/unity/extras/fixture/src
 TEST_INC_DIR=test/unity/src
 
 # not ideal but it works for now
-DEBUG_OBJS=$(DEBUG_OBJ_DIR)/hardware.o $(DEBUG_OBJ_DIR)/instrs.o $(DEBUG_OBJ_DIR)/arch.o
+DEBUG_OBJS=$(DEBUG_OBJ_DIR)/hardware.o $(DEBUG_OBJ_DIR)/instrs.o $(DEBUG_OBJ_DIR)/arch.o $(DEBUG_OBJ_DIR)/debug.o
 TEST_OBJS=$(DEBUG_OBJ_DIR)/test_runner.o \
 		$(DEBUG_OBJ_DIR)/arch_test.o \
 		$(DEBUG_OBJ_DIR)/test_helper.o \

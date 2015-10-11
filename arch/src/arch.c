@@ -2,10 +2,10 @@
 #include "arch.h" 
 #include "instrs.h" 
 
-const extern int32_t MAX_INT	= 0x7FFFFFFF;
-const extern uint32_t U_MAX_INT	= 0xFFFFFFFF;
-const extern int32_t MIN_INT 	= 0x80000000;
-const extern uint32_t U_MIN_INT = 0x00000000;
+const int32_t MAX_INT	= 0x7FFFFFFF;
+const uint32_t U_MAX_INT	= 0xFFFFFFFF;
+const int32_t MIN_INT 	= 0x80000000;
+const uint32_t U_MIN_INT = 0x00000000;
 
 Decoded_instr_t decode_instr(Word32_t instr) {
 	Decoded_instr_t dinstr;
