@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdlib.h>
-#include "vmips.h"
-// this is user-defined architecture configuration parameters
-#include "arch.h"
+#include <stdlib.h> 
+#include "vmips.h" 
+
+#include "arch.h" 
 
 
 /*
@@ -12,6 +12,10 @@
  */
 typedef struct {
     Word32_t regs[NUM_REGISTERS];
+    Word32_t pc; // program counter reg
+    Word32_t status; // processor status reg
+    Word32_t hi;
+    Word32_t lo;
     unsigned int num_regs;
     unsigned int reg_size;
 } Reg_file_t; // mips has 32 registers, each holding a 32 bit word
@@ -28,6 +32,7 @@ typedef struct {
     Word32_t memory[MEM_SIZE_IN_WORDS];
     unsigned int mem_words;
     unsigned int word_size;
+    unsigned int word_size_bytes;
 } Memory_t;
 
 /*
@@ -35,13 +40,21 @@ typedef struct {
  */
 Memory_t *init_memory_space();
 
+typedef struct {
+    Reg_file_t *reg_file;
+    Memory_t *mem_space;
+    int terminate; // boolean flag to determine whether process will terminate or not
+} Process_t;
+
+Process_t *build_process();
+
 /*
  * abstraction of processors opcode handling functions.
  *
  * This is a table of function pointers indexed by opcode
  */
 typedef struct {
-    void (*opcodes[OPCODE_COUNT]) (Word32_t);
+    void (*opcodes[OPCODE_COUNT]) (Decoded_instr_t, Process_t *);
     unsigned int num_opcodes;
 } Opcode_table_t;
 
@@ -55,9 +68,6 @@ typedef struct {
     Opcode_table_t *opcode_table;
 } Arch_info_t;
 
-/*
-TODO: implement this
-should return a struct with info about the platform, including at least endian-ness
- */
 Arch_info_t *arch_init();
 
+void cleanup(Arch_info_t *arch, Process_t *proc);

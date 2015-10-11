@@ -1,0 +1,53 @@
+CC=cl.exe
+CFLAGS=/TC /O2 /W4
+CFLAGS_TEST=/TC /Od /Zi /W4
+OBJ_DIR=obj
+DEBUG_OBJ_DIR=debug_obj
+INC_DIR=inc
+SRC_DIR=src
+UNIT_TEST_DIR=test/unit
+
+USER_INC_DIR=arch/inc
+USER_SRC_DIR=arch/src
+USER_SRC=$(USER_SRC_DIR)/*.c
+
+TEST_INC_DIR_FIXTURE=test/unity/extras/fixture/src
+TEST_INC_DIR=test/unity/src
+
+# not ideal but it works for now
+OBJS=$(OBJ_DIR)\vmips.obj $(OBJ_DIR)\hardware.obj $(OBJ_DIR)\instrs.obj $(OBJ_DIR)\arch.obj
+DEBUG_OBJS=$(DEBUG_OBJ_DIR)\hardware.obj $(DEBUG_OBJ_DIR)\instrs.obj $(DEBUG_OBJ_DIR)\arch.obj
+TEST_OBJS=$(DEBUG_OBJ_DIR)\test_runner.obj \
+		$(DEBUG_OBJ_DIR)\arch_test.obj \
+		$(DEBUG_OBJ_DIR)\test_helper.obj \
+		$(DEBUG_OBJ_DIR)\alu_logical_test.obj \
+		$(DEBUG_OBJ_DIR)\alu_shift_test.obj \
+		$(DEBUG_OBJ_DIR)\alu_arithmetic_test.obj
+
+UNITY_DIR=test\unity
+UNITY_OBJS=$(DEBUG_OBJ_DIR)\unity.obj $(DEBUG_OBJ_DIR)\unity_fixture.obj
+
+all: vmips.exe
+
+test: vmips_test.exe
+		
+vmips.exe: $(OBJS)
+	$(CC) /Fevmips.exe $(OBJS)
+vmips_test.exe: $(DEBUG_OBJS) $(TEST_OBJS)
+	cd $(UNITY_DIR)
+	nmake /f makefile.win
+	cd ..
+	cd ..
+	$(CC) /Fevmips_test.exe $(TEST_OBJS) $(DEBUG_OBJS) $(UNITY_OBJS)
+{$(SRC_DIR)\}.c{$(OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS) /c /Fo$@ $** /I $(INC_DIR) /I $(USER_INC_DIR)
+{$(USER_SRC_DIR)\}.c{$(OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS) /c /Fo$@ $** /I $(INC_DIR) /I $(USER_INC_DIR)
+{$(SRC_DIR)\}.c{$(DEBUG_OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS_TEST) /c /Fo$@ $** /I $(INC_DIR) /I $(USER_INC_DIR)
+{$(USER_SRC_DIR)\}.c{$(DEBUG_OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS_TEST) /c /Fo$@ $** /I $(INC_DIR) /I $(USER_INC_DIR)
+{$(UNIT_TEST_DIR)\}.c{$(DEBUG_OBJ_DIR)\}.obj:
+	$(CC) $(CFLAGS_TEST) /c /Fo$@ $** /I $(INC_DIR) /I $(USER_INC_DIR) /I $(TEST_INC_DIR) /I $(TEST_INC_DIR_FIXTURE)
+clean:
+	del $(OBJ_DIR)\*.obj $(DEBUG_OBJ_DIR)\*.obj *.i vmips.exe vmips_test.exe
