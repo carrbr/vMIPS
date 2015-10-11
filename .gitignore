@@ -1,5 +1,6 @@
 # Object and other compiler generated files
 vmips
+vmips_test
 *.o
 *.ko
 *.obj
