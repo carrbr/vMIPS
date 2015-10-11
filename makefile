@@ -41,8 +41,7 @@ prof: $(OBJS_GCC_PROF)
 vmips: $(OBJS) $(USER_OBJS)
 	$(CC) -o vmips $(OBJS) $(USER_OBJS) $(FLAGS)
 vmips_test: $(DEBUG_OBJS) $(TEST_OBJS)
-	cd $(UNITY_DIR)
-	make
+	cd $(UNITY_DIR) && $(MAKE) 
 	cd ..
 	cd ..
 	$(CC) -o vmips_test $(TEST_OBJS) $(DEBUG_OBJS) $(UNITY_OBJS)

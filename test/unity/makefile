@@ -8,7 +8,8 @@ FIXTURE_DIR=extras/fixture/src
 # not ideal but it works for now
 DEBUG_OBJS=$(DEBUG_OBJ_DIR)/unity.o $(DEBUG_OBJ_DIR)/unity_fixture.o
 
-all: $(DEBUG_OBJS)
+test: $(DEBUG_OBJS)
+	echo $(DEBUG_OBJS)
 
 $(DEBUG_OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS_TEST) -c -o $@ $^
